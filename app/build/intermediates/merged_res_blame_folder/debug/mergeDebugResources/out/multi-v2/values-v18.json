@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.miniimageeditor.app-mergeDebugResources-46:/values-v18/values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\15pro\\.gradle\\caches\\8.13\\transforms\\a8adace01116b592b99dc56d5bb39eb8\\transformed\\appcompat-1.7.0\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        }
+    ]
+}

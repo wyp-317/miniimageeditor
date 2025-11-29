@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar_bg">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/title_editor"
+            android:background="@color/toolbar_bg"
+            android:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <android.opengl.GLSurfaceView
+            android:id="@+id/glView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.example.miniimageeditor.ui.CropOverlayView
+            android:id="@+id/cropOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/savingOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#66000000"
+            android:visibility="gone">
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="#88000000">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRatioFree"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="自由"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
+            android:paddingHorizontal="10dp"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="@dimen/corner_sm"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRatio11"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="1:1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
+            android:paddingHorizontal="10dp"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="@dimen/corner_sm"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRatio34"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="3:4"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
+            android:paddingHorizontal="10dp"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="@dimen/corner_sm"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRatio916"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="9:16"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
+            android:paddingHorizontal="10dp"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="@dimen/corner_sm"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUndo"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="撤销"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
+            android:paddingHorizontal="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:cornerRadius="@dimen/corner_sm"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRedo"
+            style="@style/Widget.MaterialComponents.Button"
+            android:text="重做"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
+            android:paddingHorizontal="10dp"
+            app:cornerRadius="@dimen/corner_sm"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/btnExport"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:minHeight="36dp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="12dp"
+            android:text="保存到本地"
+            android:contentDescription="导出到相册"
+            app:icon="@drawable/ic_export" />
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

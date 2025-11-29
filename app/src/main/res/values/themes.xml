@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MiniImageEditor" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">#2E7AF2</item>
+        <item name="colorSecondary">#00FF66</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.Splash" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/app_icon_bg</item>
+        <item name="android:navigationBarColor">@color/app_icon_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
