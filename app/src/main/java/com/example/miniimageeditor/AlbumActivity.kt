@@ -156,6 +156,15 @@ class AlbumVH(private val binding: ItemMediaBinding) : RecyclerView.ViewHolder(b
             binding.duration.visibility = View.GONE
         }
         binding.thumbnail.scaleType = ImageView.ScaleType.CENTER_CROP
-        binding.thumbnail.load(item.uri)
+        if (item.isVideo) {
+            binding.thumbnail.load(item.uri) {
+                videoFrameMillis(0)
+                crossfade(true)
+            }
+        } else {
+            binding.thumbnail.load(item.uri) {
+                crossfade(true)
+            }
+        }
     }
 }

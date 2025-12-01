@@ -1,0 +1,27 @@
+# Android/Gradle build outputs
+/build/
+/app/build/
+/.gradle/
+
+# Local IDE/OS files
+/local.properties
+*.iml
+.DS_Store
+
+# IntelliJ IDEA volatile files (keep project settings but ignore workspace)
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/assetWizardSettings.xml
+.idea/shelf/
+
+# NDK/CMake intermediates
+.cxx/
+
+# APK/AAB generated under app/build — place distributables under ./release/ instead
+*.ap_ 
+*.apk 
+*.aab 
+
+# Logs and reports
+*.log
+/**/reports/
