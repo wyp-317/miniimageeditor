@@ -108,15 +108,15 @@
             android:minHeight="56dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCollage"
+            android:id="@+id/btnBeautify"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.9"
-            android:text="@string/home_collage"
+            android:text="图片美化"
             android:textColor="@color/black"
             android:backgroundTint="@color/mint"
-            app:icon="@drawable/ic_grid"
+            app:icon="@drawable/ic_feature_magic"
             app:iconTint="@color/black"
             app:cornerRadius="@dimen/corner_md"
             app:iconPadding="@dimen/space_sm"

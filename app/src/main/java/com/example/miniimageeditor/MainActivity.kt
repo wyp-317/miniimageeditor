@@ -3,6 +3,7 @@ package com.example.miniimageeditor
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
@@ -36,6 +37,10 @@ class MainActivity : ComponentActivity() {
         }
         binding.btnCamera.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))
+        }
+
+        binding.btnBeautify.setOnClickListener {
+            startActivity(Intent(this, AlbumActivity::class.java))
         }
 
         val adapter = FeatureAdapter(listOf(

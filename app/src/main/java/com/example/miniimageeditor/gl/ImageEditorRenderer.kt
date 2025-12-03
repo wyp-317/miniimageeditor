@@ -15,12 +15,21 @@ class ImageEditorRenderer : GLSurfaceView.Renderer {
     private var positionHandle = 0
     private var texCoordHandle = 0
     private var mvpHandle = 0
+    private var filterModeHandle = 0
+    private var brightnessHandle = 0
+    private var contrastHandle = 0
+    private var exposureHandle = 0
 
     // MVP matrix (only scale/translate here)
     private val mvp = FloatArray(16) { i -> if (i % 5 == 0) 1f else 0f }
     private var scale = 1f
     private var tx = 0f
     private var ty = 0f
+
+    private var filterMode = 0
+    private var brightness = 0f
+    private var contrast = 0f
+    private var exposure = 0f
 
     fun setTranslation(dx: Float, dy: Float) {
         tx += dx
@@ -75,6 +84,10 @@ class ImageEditorRenderer : GLSurfaceView.Renderer {
         positionHandle = GLES20.glGetAttribLocation(program, "aPosition")
         texCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoord")
         mvpHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix")
+        filterModeHandle = GLES20.glGetUniformLocation(program, "uFilterMode")
+        brightnessHandle = GLES20.glGetUniformLocation(program, "uBrightness")
+        contrastHandle = GLES20.glGetUniformLocation(program, "uContrast")
+        exposureHandle = GLES20.glGetUniformLocation(program, "uExposure")
         textureId = createTexture()
     }
 
@@ -87,6 +100,10 @@ class ImageEditorRenderer : GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         GLES20.glUseProgram(program)
         GLES20.glUniformMatrix4fv(mvpHandle, 1, false, mvp, 0)
+        GLES20.glUniform1i(filterModeHandle, filterMode)
+        GLES20.glUniform1f(brightnessHandle, brightness)
+        GLES20.glUniform1f(contrastHandle, contrast)
+        GLES20.glUniform1f(exposureHandle, exposure)
 
         GLES20.glEnableVertexAttribArray(positionHandle)
         GLES20.glEnableVertexAttribArray(texCoordHandle)
@@ -164,8 +181,42 @@ class ImageEditorRenderer : GLSurfaceView.Renderer {
             precision mediump float;
             varying vec2 vTex;
             uniform sampler2D sTexture;
+            uniform int uFilterMode;
+            uniform float uBrightness;
+            uniform float uContrast;
+            uniform float uExposure;
             void main() {
-                gl_FragColor = texture2D(sTexture, vTex);
+                vec4 c = texture2D(sTexture, vTex);
+                float avg = (c.r + c.g + c.b) / 3.0;
+                // Exposure gain (approximate linear)
+                c.rgb = c.rgb * (1.0 + uExposure);
+                // Contrast around 0.5
+                c.rgb = (c.rgb - 0.5) * (1.0 + uContrast) + 0.5;
+                // Brightness offset
+                c.rgb += vec3(uBrightness);
+                float lum = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+                if (uFilterMode == 1) {
+                    // 去灰增白：提升高亮并适度增饱和
+                    float w = smoothstep(0.6, 1.0, lum);
+                    c.rgb = mix(c.rgb, c.rgb + vec3(0.12), w);
+                    float satFactor = 1.15;
+                    c.rgb = mix(vec3(avg), c.rgb, satFactor);
+                } else if (uFilterMode == 2) {
+                    // 暗调增彩：暗部提升饱和度，轻微加对比
+                    float d = 1.0 - smoothstep(0.0, 0.5, lum);
+                    float satFactor = 1.0 + 0.6 * d;
+                    c.rgb = mix(vec3(avg), c.rgb, satFactor);
+                    c.rgb = (c.rgb - 0.5) * 1.05 + 0.5;
+                } else if (uFilterMode == 3) {
+                    // 暗光提亮：暗部加亮
+                    float lift = (1.0 - smoothstep(0.0, 0.5, lum)) * 0.22;
+                    c.rgb += vec3(lift);
+                } else if (uFilterMode == 4) {
+                    // 黑白
+                    c.rgb = vec3(lum);
+                }
+                c.rgb = clamp(c.rgb, 0.0, 1.0);
+                gl_FragColor = c;
             }
         """
 
@@ -186,4 +237,9 @@ class ImageEditorRenderer : GLSurfaceView.Renderer {
 
     fun currentScale(): Float = scale
     fun currentTranslation(): Pair<Float, Float> = tx to ty
+
+    fun setFilterMode(mode: Int) { filterMode = mode }
+    fun setBrightness(v: Float) { brightness = v }
+    fun setContrast(v: Float) { contrast = v }
+    fun setExposure(v: Float) { exposure = v }
 }

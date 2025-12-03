@@ -7,4 +7,5 @@
     <color name="blue">#2E7AF2</color>
     <color name="toolbar_bg">#CC000000</color>
     <color name="app_icon_bg">#0B6BD3</color>
+    <color name="button_ripple">#1A000000</color>
 </resources>

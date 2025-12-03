@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.activity.result.PickVisualMediaRequest
 import coil.load
+import coil.request.videoFrameMillis
 import com.example.miniimageeditor.databinding.ActivityAlbumBinding
 import com.example.miniimageeditor.databinding.ItemMediaBinding
 import com.example.miniimageeditor.media.MediaItem
@@ -31,13 +32,14 @@ class AlbumActivity : ComponentActivity() {
     private lateinit var binding: ActivityAlbumBinding
     private lateinit var vm: AlbumViewModel
     private val adapter = AlbumAdapter { item -> onItemClick(item) }
+    private var beautyMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlbumBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.albumGrid.layoutManager = GridLayoutManager(this, 3)
         binding.albumGrid.adapter = adapter
@@ -45,6 +47,7 @@ class AlbumActivity : ComponentActivity() {
         binding.albumGrid.addItemDecoration(com.example.miniimageeditor.ui.SpaceItemDecoration(space))
 
         vm = ViewModelProvider(this)[AlbumViewModel::class.java]
+        beautyMode = false
         if (hasPermission()) {
             load()
         } else {
@@ -64,8 +67,10 @@ class AlbumActivity : ComponentActivity() {
 
     private val pickVisual = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
         if (uri != null) {
+            android.util.Log.d("Album", "pickVisual uri=" + uri)
             val i = Intent(this, EditorActivity::class.java)
             i.putExtra("uri", uri.toString())
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(i)
         }
     }
@@ -114,14 +119,22 @@ class AlbumActivity : ComponentActivity() {
     }
 
     private fun onItemClick(item: MediaItem) {
+        android.util.Log.d("Album", "onItemClick uri=" + item.uri + " isVideo=" + item.isVideo + " beautyMode=" + beautyMode)
         if (item.isVideo) {
             val v = Intent(this, VideoPlayerActivity::class.java)
             v.putExtra("uri", item.uri.toString())
             startActivity(v)
         } else {
-            val i = Intent(this, EditorActivity::class.java)
-            i.putExtra("uri", item.uri.toString())
-            startActivity(i)
+            try {
+                val i = Intent(this, EditorActivity::class.java)
+                i.putExtra("uri", item.uri.toString())
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                android.util.Log.d("Album", "startActivity target=" + i.component?.className)
+                startActivity(i)
+            } catch (e: Exception) {
+                android.util.Log.e("Album", "startActivity failed: " + e.message, e)
+                Toast.makeText(this, getString(R.string.error_open_image), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

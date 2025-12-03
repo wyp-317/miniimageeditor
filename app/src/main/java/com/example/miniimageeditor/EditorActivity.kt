@@ -15,6 +15,8 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.Toast
 import android.util.Log
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.miniimageeditor.databinding.ActivityEditorBinding
@@ -35,11 +37,18 @@ class EditorActivity : ComponentActivity() {
     private lateinit var gestureDetector: GestureDetector
     private var gestureActive = false
 
+    private enum class Mode { EDIT, FILTER, ADJUST }
+    private var currentMode = Mode.EDIT
+
     private data class EditorState(
         val scale: Float,
         val tx: Float,
         val ty: Float,
-        val crop: android.graphics.RectF
+        val crop: android.graphics.RectF,
+        val filterMode: Int,
+        val brightness: Float,
+        val contrast: Float,
+        val exposure: Float
     )
     private val undoStack = ArrayDeque<EditorState>()
     private val redoStack = ArrayDeque<EditorState>()
@@ -48,12 +57,18 @@ class EditorActivity : ComponentActivity() {
         renderer.currentScale(),
         renderer.currentTranslation().first,
         renderer.currentTranslation().second,
-        android.graphics.RectF(binding.cropOverlay.cropRect)
+        android.graphics.RectF(binding.cropOverlay.cropRect),
+        getFilterMode(),
+        curBrightness,
+        curContrast,
+        curExposure
     )
 
     private fun applyState(s: EditorState) {
         renderer.setTransform(s.scale, s.tx, s.ty)
         binding.cropOverlay.cropRect.set(s.crop)
+        setFilterMode(s.filterMode)
+        setAdjustments(s.brightness, s.contrast, s.exposure)
         binding.glView.requestRender()
         binding.cropOverlay.invalidate()
     }
@@ -62,6 +77,13 @@ class EditorActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomBar) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val extra = (8 * resources.displayMetrics.density).toInt()
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, bars.bottom + extra)
+            insets
+        }
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
@@ -75,6 +97,10 @@ class EditorActivity : ComponentActivity() {
         binding.glView.renderMode = android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY
 
         if (uri != null) {
+            try {
+                contentResolver.takePersistableUriPermission(uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } catch (_: SecurityException) {
+            }
             contentResolver.openInputStream(uri)?.use { input ->
                 val bytes = input.readBytes()
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -168,7 +194,89 @@ class EditorActivity : ComponentActivity() {
             override fun onCropChanged(rect: android.graphics.RectF) {}
             override fun onCropEnd(rect: android.graphics.RectF) {}
         }
+        // Mode switching
+        binding.groupModes.check(binding.btnModeEdit.id)
+        binding.groupModes.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            when (checkedId) {
+                binding.btnModeEdit.id -> switchMode(Mode.EDIT)
+                binding.btnModeFilter.id -> switchMode(Mode.FILTER)
+                binding.btnModeAdjust.id -> switchMode(Mode.ADJUST)
+            }
+        }
+
+        // Filters
+        binding.btnFilter1.setOnClickListener { undoStack.addLast(snapshot()); redoStack.clear(); setFilterMode(1) }
+        binding.btnFilter2.setOnClickListener { undoStack.addLast(snapshot()); redoStack.clear(); setFilterMode(2) }
+        binding.btnFilter3.setOnClickListener { undoStack.addLast(snapshot()); redoStack.clear(); setFilterMode(3) }
+        binding.btnFilter4.setOnClickListener { undoStack.addLast(snapshot()); redoStack.clear(); setFilterMode(4) }
+
+        // Adjustments
+        binding.sliderBrightness.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) { undoStack.addLast(snapshot()); redoStack.clear() }
+            curBrightness = value / 100f * 0.5f
+            renderer.setBrightness(curBrightness)
+            binding.glView.requestRender()
+        }
+        binding.sliderContrast.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) { undoStack.addLast(snapshot()); redoStack.clear() }
+            curContrast = value / 100f * 0.8f
+            renderer.setContrast(curContrast)
+            binding.glView.requestRender()
+        }
+        binding.sliderExposure.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) { undoStack.addLast(snapshot()); redoStack.clear() }
+            curExposure = value / 100f * 0.8f
+            renderer.setExposure(curExposure)
+            binding.glView.requestRender()
+        }
         Log.d("Editor", "Loaded uri=" + uri)
+    }
+
+    private var curBrightness = 0f
+    private var curContrast = 0f
+    private var curExposure = 0f
+    private var curFilter = 0
+
+    private fun switchMode(mode: Mode) {
+        currentMode = mode
+        when (mode) {
+            Mode.EDIT -> {
+                binding.panelEdit.animate().alpha(1f).setDuration(180).withStartAction { binding.panelEdit.visibility = android.view.View.VISIBLE }.start()
+                binding.panelFilter.animate().alpha(0f).setDuration(180).withEndAction { binding.panelFilter.visibility = android.view.View.GONE }.start()
+                binding.panelAdjust.animate().alpha(0f).setDuration(180).withEndAction { binding.panelAdjust.visibility = android.view.View.GONE }.start()
+                binding.cropOverlay.visibility = android.view.View.VISIBLE
+            }
+            Mode.FILTER -> {
+                binding.panelEdit.animate().alpha(0f).setDuration(180).withEndAction { binding.panelEdit.visibility = android.view.View.GONE }.start()
+                binding.panelFilter.animate().alpha(1f).setDuration(180).withStartAction { binding.panelFilter.visibility = android.view.View.VISIBLE }.start()
+                binding.panelAdjust.animate().alpha(0f).setDuration(180).withEndAction { binding.panelAdjust.visibility = android.view.View.GONE }.start()
+                binding.cropOverlay.visibility = android.view.View.INVISIBLE
+            }
+            Mode.ADJUST -> {
+                binding.panelEdit.animate().alpha(0f).setDuration(180).withEndAction { binding.panelEdit.visibility = android.view.View.GONE }.start()
+                binding.panelFilter.animate().alpha(0f).setDuration(180).withEndAction { binding.panelFilter.visibility = android.view.View.GONE }.start()
+                binding.panelAdjust.animate().alpha(1f).setDuration(180).withStartAction { binding.panelAdjust.visibility = android.view.View.VISIBLE }.start()
+                binding.cropOverlay.visibility = android.view.View.INVISIBLE
+            }
+        }
+    }
+
+    private fun setFilterMode(mode: Int) {
+        curFilter = mode
+        renderer.setFilterMode(mode)
+        binding.glView.requestRender()
+    }
+
+    private fun getFilterMode(): Int = curFilter
+
+    private fun setAdjustments(b: Float, c: Float, e: Float) {
+        curBrightness = b
+        curContrast = c
+        curExposure = e
+        renderer.setBrightness(b)
+        renderer.setContrast(c)
+        renderer.setExposure(e)
     }
 
     private fun exportResult() {
@@ -208,13 +316,14 @@ class EditorActivity : ComponentActivity() {
         val imgW = (right - left).coerceAtLeast(1)
         val imgH = (bottom - top).coerceAtLeast(1)
 
-        val result = try {
+        val cropped = try {
             Bitmap.createBitmap(src, left, top, imgW, imgH)
         } catch (e: Exception) {
             Log.e("Editor", "Crop failed: ${e.message}")
             src
         }
-        saveToAlbum(result)
+        val effected = com.example.miniimageeditor.util.BitmapUtils.applyEffects(cropped, curFilter, curBrightness, curContrast, curExposure)
+        saveToAlbum(effected ?: cropped)
     }
 
     private fun saveToAlbum(bitmap: Bitmap) {

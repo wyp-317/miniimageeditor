@@ -13,4 +13,22 @@
     <string name="saving">正在保存…</string>
     <string name="saved_to_album">已保存到相册</string>
     <string name="save_failed">保存失败</string>
+    <string name="error_open_image">无法打开图片</string>
+    <string name="mode_edit">编辑</string>
+    <string name="mode_filter">滤镜</string>
+    <string name="mode_adjust">调色</string>
+    <string name="ratio_free">自由</string>
+    <string name="ratio_11">1:1</string>
+    <string name="ratio_34">3:4</string>
+    <string name="ratio_916">9:16</string>
+    <string name="undo">撤销</string>
+    <string name="redo">重做</string>
+    <string name="filter_1">去灰增白</string>
+    <string name="filter_2">暗调增彩</string>
+    <string name="filter_3">暗光提亮</string>
+    <string name="filter_4">黑白</string>
+    <string name="brightness">亮度</string>
+    <string name="contrast">对比度</string>
+    <string name="exposure">曝光</string>
+    <string name="save_to_local">保存到本地</string>
 </resources>

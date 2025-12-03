@@ -8,7 +8,9 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbar_bg">
+        android:background="@color/toolbar_bg"
+        android:fitsSystemWindows="true"
+        android:elevation="8dp">
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -16,6 +18,7 @@
             android:background="@color/toolbar_bg"
             android:title="@string/title_album"
             android:titleTextColor="@color/white"
+            android:elevation="4dp"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -27,6 +30,7 @@
         android:padding="8dp"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 
     <ProgressBar
         android:id="@+id/progress"

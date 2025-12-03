@@ -2,7 +2,8 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -48,95 +49,230 @@
 
     <LinearLayout
         android:id="@+id/bottomBar"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
+        android:background="@android:color/transparent"
         android:padding="12dp"
-        android:gravity="center_vertical"
-        android:background="#88000000">
+        android:elevation="8dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRatioFree"
-            style="@style/Widget.MaterialComponents.Button"
-            android:text="自由"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="10dp"
-            android:layout_marginStart="8dp"
-            app:cornerRadius="@dimen/corner_sm"/>
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/groupModes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeEdit"
+                style="@style/AppButton.Toggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="40dp"
+                android:text="编辑"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeFilter"
+                style="@style/AppButton.Toggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="40dp"
+                android:text="滤镜"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeAdjust"
+                style="@style/AppButton.Toggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="40dp"
+                android:text="调色"/>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRatio11"
-            style="@style/Widget.MaterialComponents.Button"
-            android:text="1:1"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="10dp"
-            android:layout_marginStart="8dp"
-            app:cornerRadius="@dimen/corner_sm"/>
+        <LinearLayout
+            android:id="@+id/panelEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:background="@drawable/panel_bg">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRatioFree"
+                style="@style/AppButton"
+                android:text="自由"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="@dimen/corner_sm"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRatio11"
+                style="@style/AppButton"
+                android:text="1:1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="@dimen/corner_sm"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRatio34"
+                style="@style/AppButton"
+                android:text="3:4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="@dimen/corner_sm"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRatio916"
+                style="@style/AppButton"
+                android:text="9:16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                app:cornerRadius="@dimen/corner_sm"/>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUndo"
+                style="@style/AppButton"
+                android:text="撤销"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="@dimen/corner_sm"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRedo"
+                style="@style/AppButton"
+                android:text="重做"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                app:cornerRadius="@dimen/corner_sm"/>
+        </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRatio34"
-            style="@style/Widget.MaterialComponents.Button"
-            android:text="3:4"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="10dp"
-            android:layout_marginStart="8dp"
-            app:cornerRadius="@dimen/corner_sm"/>
+        <LinearLayout
+            android:id="@+id/panelFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:visibility="gone"
+            android:background="@drawable/panel_bg">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFilter1"
+                style="@style/AppButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:layout_weight="1"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="去灰增白"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFilter2"
+                style="@style/AppButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:layout_weight="1"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="暗调增彩"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFilter3"
+                style="@style/AppButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:layout_weight="1"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="暗光提亮"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFilter4"
+                style="@style/AppButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:layout_weight="1"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="黑白"/>
+        </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRatio916"
-            style="@style/Widget.MaterialComponents.Button"
-            android:text="9:16"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="10dp"
-            android:layout_marginStart="8dp"
-            app:cornerRadius="@dimen/corner_sm"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUndo"
-            style="@style/Widget.MaterialComponents.Button"
-            android:text="撤销"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="10dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            app:cornerRadius="@dimen/corner_sm"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRedo"
-            style="@style/Widget.MaterialComponents.Button"
-            android:text="重做"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="10dp"
-            app:cornerRadius="@dimen/corner_sm"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        <LinearLayout
+            android:id="@+id/panelAdjust"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:visibility="gone"
+            android:background="@drawable/panel_bg">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="亮度"/>
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderBrightness"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:valueFrom="-100"
+                android:valueTo="100"
+                android:value="0"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="对比度"/>
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderContrast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:valueFrom="-100"
+                android:valueTo="100"
+                android:value="0"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="曝光"/>
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderExposure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:valueFrom="-100"
+                android:valueTo="100"
+                android:value="0"/>
+        </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/btnExport"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:minHeight="36dp"
             android:minWidth="0dp"
             android:paddingHorizontal="12dp"
             android:text="保存到本地"
             android:contentDescription="导出到相册"
-            app:icon="@drawable/ic_export" />
+            app:icon="@drawable/ic_export"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 
 

@@ -25,6 +25,7 @@ class CropOverlayView @JvmOverloads constructor(
     val cropRect = RectF()
     var aspectRatio: Float? = null
     var listener: OnCropChangeListener? = null
+    private var multiTouchActive = false
     private var lastX = 0f
     private var lastY = 0f
     private var mode: Int = 0
@@ -69,7 +70,19 @@ class CropOverlayView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.pointerCount > 1) return false
+        when (event.actionMasked) {
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                multiTouchActive = true
+                mode = -1
+                return true
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                multiTouchActive = false
+                mode = 0
+                return true
+            }
+        }
+        if (event.pointerCount > 1 || multiTouchActive) return true
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 lastX = event.x; lastY = event.y
@@ -77,6 +90,7 @@ class CropOverlayView @JvmOverloads constructor(
                 listener?.onCropStart()
             }
             MotionEvent.ACTION_MOVE -> {
+                if (multiTouchActive) return true
                 val dx = event.x - lastX
                 val dy = event.y - lastY
                 when (mode) {
@@ -95,7 +109,11 @@ class CropOverlayView @JvmOverloads constructor(
                 invalidate()
                 listener?.onCropChanged(cropRect)
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> listener?.onCropEnd(cropRect)
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                multiTouchActive = false
+                mode = 0
+                listener?.onCropEnd(cropRect)
+            }
         }
         return true
     }

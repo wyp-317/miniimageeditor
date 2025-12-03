@@ -5,14 +5,16 @@
 **核心功能截图**
 - 首页（品牌位 + 主按钮 + 工具网格）：
   - ![首页](./docs/images/home.png)
-- 编辑器（深色工作区 + 画布 + 底部工具条 + 裁剪框）：
+- 编辑器（深色工作区 + 画布 + 底部工具条 + 裁剪框 + 滤镜/调色面板）：
   - ![编辑器](./docs/images/editor.png)
 
 
 ## 功能概览
 - 首页：原生控件搭建；自定义扫光视图 `ShimmerImageView`。
 - 相册：MediaStore 异步拉取图片/视频缩略图，视频显示播放符号与时长角标。
-- 编辑器：OpenGL ES 着色器管线渲染纹理，支持捏合缩放（焦点跟随）与单指平移；裁剪框拖拽与固定比例（自由/1:1/3:4/9:16）；撤销/重做。
+- 编辑器：OpenGL ES 着色器管线渲染纹理，支持捏合缩放（焦点跟随）与单指平移；裁剪框拖拽与固定比例（自由/1:1/3:4/9:16）；撤销/重做；模式切换（编辑/滤镜/调色）。
+- 滤镜：四种滤镜实时预览（去灰增白、暗调增彩、暗光提亮、黑白）。
+- 调色：亮度/对比度/曝光三项滑条，居中为 0，左右滑动实时生效。
 - 导出：将编辑操作与裁剪结果应用到原图，保存 PNG 至 `Pictures/MiniEdit`。
 - 拍照与视频：CameraX 拍照保存到相册；ExoPlayer 播放相册视频。
 
@@ -21,7 +23,7 @@
   - 安装 Android Studio（2023.1+），SDK Platform 34/36，Build-Tools 34.x+；JDK 17。
   - 导入目录：`android/miniimageeditor`。
 - 调试运行
-  - 选择 `app` 模块，点击 Run；首页→相册→编辑→导出完整流程可运行。
+  - 选择 `app` 模块，点击 Run；首页→相册→编辑→滤镜/调色→导出完整流程可运行。
 
 
 ## 适配与权限
@@ -31,6 +33,8 @@
 ## 技术实现
 - 主页与相册：`RecyclerView` 网格 + `Material` 按钮；Coil 支持 GIF/WebP；视频缩略图播放符号与时长角标。
 - OpenGL 编辑器：顶点/片元着色器绘制四边形纹理，MVP 矩阵实现缩放与平移；捏合按焦点缩放并校正平移；裁剪框叠层交互与导出映射；撤销/重做基于状态快照快速恢复。
+- 滤镜与调色（实时预览）：在片段着色器中通过 Uniform 注入 `uFilterMode/uBrightness/uContrast/uExposure` 实时处理；滤镜包含高亮提升、暗部增彩、暗光提亮与黑白。
+- 导出一致性：CPU 端 `BitmapUtils.applyEffects()` 以同样参数与近似公式应用到裁剪后的位图，保证保存图与预览一致。
 - 协程与 Jetpack：`ViewModel` + `StateFlow` 驱动异步加载；Room 记录导出历史。
 - 混淆：`app/proguard-rules.pro` 保留 OpenGL/Room/Coil 必要类。
 
@@ -44,6 +48,7 @@
   - 权限与 MediaStore 适配：区分 33+ 与旧版权限；统一保存到标准相册路径，降低机型差异。
   - OpenGL 坐标与裁剪映射：屏幕坐标到原图像素反映射，捏合缩放引入焦点 NDC 修正保持手感稳定；保留将裁剪移至 GPU 纹理坐标反变换的升级空间。
   - 视频预览：使用 Media3 ExoPlayer，复用相册跳转逻辑，保证播放链路简单稳定。
+- 过滤与调色：预览在 GPU 实时，导出在 CPU 端按参数一致实现；统一 UI 风格与可读性，面板白底黑字（详见 `docs/UI_STYLE.md`）。
 - 后续规划：接入 CameraX 高级能力（对焦/曝光/网格）、精确裁剪坐标反变换、完整工具栏与滑杆参数面板、AI 人像优化模块。
 
 ## 目录索引
@@ -52,6 +57,7 @@
 - 媒体库：`app/src/main/java/com/example/miniimageeditor/media/MediaStoreRepository.kt`
 - 编辑器：`app/src/main/java/com/example/miniimageeditor/EditorActivity.kt`、`app/src/main/java/com/example/miniimageeditor/gl/ImageEditorRenderer.kt`
 - 自定义视图：`app/src/main/java/com/example/miniimageeditor/ui/ShimmerImageView.kt`、`ui/CropOverlayView.kt`
+- 样式与可读性：`app/src/main/res/values/styles.xml`、`docs/UI_STYLE.md`
 - 混淆：`app/proguard-rules.pro`
 
 
