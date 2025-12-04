@@ -33,6 +33,22 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <activity android:name="com.example.miniimageeditor.CollageSelectActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.example.miniimageeditor.CollageModeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.example.miniimageeditor.CollageLinearActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.example.miniimageeditor.CollageFreeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.example.miniimageeditor.CollageGridActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
 
         <activity android:name="com.example.miniimageeditor.SplashActivity"
             android:exported="true"

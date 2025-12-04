@@ -18,17 +18,33 @@
 - 导出：将编辑操作与裁剪结果应用到原图，保存 PNG 至 `Pictures/MiniEdit`。
 - 拍照与视频：CameraX 拍照保存到相册；ExoPlayer 播放相册视频。
 
+### 拼图模块（新增）
+- 入口：首页“拼图”按钮进入选择页 `CollageSelectActivity`。
+- 选择页：
+  - 顶部系统风格导航；提示“请选择照片，并选择拼图方式”。
+  - 拼图方式单选行：横拼、竖拼、四宫格（2×2）、九宫格（3×3）。
+  - 底部状态栏增高，右下角垂直按钮：导入画布（系统相册）与开始拼图。
+  - “导入画布”使用 Android 13+ 系统照片选择器，仅图片；选择后弹出可缩放预览确认再设为背景。
+  - 选择了图片与方式后，“开始拼图”可用并直接进入预览保存页。
+- 预览页：
+  - 横/竖拼 `CollageLinearActivity`：统一输出基准 2048 像素高度/宽度，按方向居中排列并支持背景绘制。
+  - 宫格 `CollageGridActivity`：正方形 2048×2048，按中心裁剪缩放铺满 2×2 或 3×3 网格，支持背景绘制。
+  - 自由拼 `CollageFreeActivity`：白底画布，可拖拽/缩放/旋转已选图，支持从素材库更换背景；底部“保存到本地”。
+  - 顶部返回栏样式与相册一致；预览页标题置空，仅保留返回箭头。
+
 ## 构建与运行
 - 环境准备
   - 安装 Android Studio（2023.1+），SDK Platform 34/36，Build-Tools 34.x+；JDK 17。
   - 导入目录：`android/miniimageeditor`。
 - 调试运行
   - 选择 `app` 模块，点击 Run；首页→相册→编辑→滤镜/调色→导出完整流程可运行。
+  - 拼图流程：首页→拼图→选择图片与方式→开始拼图→预览→保存。
 
 
 ## 适配与权限
 - Android 13+ 使用 `READ_MEDIA_IMAGES/VIDEO`；Android 12- 使用 `READ_EXTERNAL_STORAGE`。
 - 使用 MediaStore 读写，避免直写外部存储；权限失败提供提示与重试（各厂商弹窗差异可通过设置引导增强）。
+- 系统照片选择器（Android 13+）：UI包含“Photos/Albums”，为系统固定设计，仅能限制类型为图片；无法隐藏“Albums”。
 
 ## 技术实现
 - 主页与相册：`RecyclerView` 网格 + `Material` 按钮；Coil 支持 GIF/WebP；视频缩略图播放符号与时长角标。
@@ -38,9 +54,16 @@
 - 协程与 Jetpack：`ViewModel` + `StateFlow` 驱动异步加载；Room 记录导出历史。
 - 混淆：`app/proguard-rules.pro` 保留 OpenGL/Room/Coil 必要类。
 
+### 拼图实现细节
+- 选择页：`CollageSelectActivity.kt` 使用 `MaterialButtonToggleGroup` 管理方式选择；“导入画布”走 `PickVisualMedia.ImageOnly` 并弹出缩放预览确认。
+- 横/竖拼：`CollageLinearActivity.kt` 对各图片按方向统一尺寸缩放，先绘制背景位图（可选）再拼接。
+- 宫格：`CollageGridActivity.kt` 计算每格尺寸，中心裁剪再缩放铺满；输出 2048×2048。
+- 自由拼：`ui/TransformableImageView.kt` 支持拖拽/缩放/旋转与越界约束；`BackgroundPickerDialog.kt` 提供素材背景选择。
+
 ## 排错与性能
 - 日志标签：`MediaRepo`、`Album`、`Editor`；使用 Logcat 过滤。
 - Profiler：检查编辑器缩放/平移时 CPU 与内存峰值；必要时启用大图采样解码与纹理复用。
+ - 拼图输出统一 2048 基准，兼顾清晰度与内存占用；背景绘制前优先中心裁剪，避免超大位图带来额外分配。
 
 ## 项目报告（摘要）
 - 设计取舍：优先打通“选图→编辑→导出”主链路；编辑器着色器管线采用简化 MVP 以保证易用性与可维护性。
@@ -56,9 +79,9 @@
 - 相册：`app/src/main/java/com/example/miniimageeditor/AlbumActivity.kt`
 - 媒体库：`app/src/main/java/com/example/miniimageeditor/media/MediaStoreRepository.kt`
 - 编辑器：`app/src/main/java/com/example/miniimageeditor/EditorActivity.kt`、`app/src/main/java/com/example/miniimageeditor/gl/ImageEditorRenderer.kt`
+- 拼图：`CollageSelectActivity.kt`、`CollageModeActivity.kt`、`CollageLinearActivity.kt`、`CollageGridActivity.kt`、`CollageFreeActivity.kt`
 - 自定义视图：`app/src/main/java/com/example/miniimageeditor/ui/ShimmerImageView.kt`、`ui/CropOverlayView.kt`
 - 样式与可读性：`app/src/main/res/values/styles.xml`、`docs/UI_STYLE.md`
 - 混淆：`app/proguard-rules.pro`
-
 
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar_bg"
+        android:fitsSystemWindows="true"
+        android:elevation="8dp">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/toolbar_bg"
+            android:title="选择拼图模式"
+            android:titleTextColor="@color/white"
+            android:elevation="4dp"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/white"
+            app:contentInsetStartWithNavigation="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    
+
+    <Button
+        android:id="@+id/btnHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="横拼"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btnVertical"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="竖拼"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btnFree"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="自由拼"/>
+
+</LinearLayout>

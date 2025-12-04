@@ -11,7 +11,7 @@
     </option>
     <option name="groupByAttributes">
       <list>
-        <option value="Type" />
+        <option value="Status" />
       </list>
     </option>
   </component>

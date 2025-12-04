@@ -3,7 +3,7 @@
     <string name="app_name">简图</string>
     <string name="home_import_photo">导入照片</string>
     <string name="home_camera">相机</string>
-    <string name="home_ai_portrait">AI修人像</string>
+    <string name="home_ai_portrait">拼图</string>
     <string name="home_collage">拼图</string>
     <string name="home_album">本地相册</string>
     <string name="title_album">本地相册</string>

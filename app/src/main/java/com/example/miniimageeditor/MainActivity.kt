@@ -43,6 +43,10 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, AlbumActivity::class.java))
         }
 
+        binding.btnAiPortrait.setOnClickListener {
+            startActivity(Intent(this, CollageSelectActivity::class.java))
+        }
+
         val adapter = FeatureAdapter(listOf(
             FeatureItem("批量修图", R.drawable.ic_feature_batch),
             FeatureItem("画质超清", R.drawable.ic_feature_hd),

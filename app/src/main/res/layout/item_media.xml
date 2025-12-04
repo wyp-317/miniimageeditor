@@ -17,6 +17,8 @@
         android:src="@drawable/ic_play"
         android:visibility="gone" />
 
+    
+
     <TextView
         android:id="@+id/duration"
         android:layout_width="wrap_content"

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar_bg"
+        android:fitsSystemWindows="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/toolbar_bg"
+            android:title="拼图"
+            android:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/white"
+            app:contentInsetStartWithNavigation="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/tvHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请选择照片，并选择拼图方式"
+        android:textColor="#666666"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/appbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/modeGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvHint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="8dp"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModeHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="横拼"
+            style="@style/AppButton.Toggle"
+            android:checkable="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModeVertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="竖拼"
+            style="@style/AppButton.Toggle"
+            android:checkable="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModeGrid2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="四宫格"
+            style="@style/AppButton.Toggle"
+            android:checkable="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModeGrid3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="九宫格"
+            style="@style/AppButton.Toggle"
+            android:checkable="true" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMedia"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/modeGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        android:padding="4dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:background="#F7F7F7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSelected"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/llActions"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/llActions"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="end|center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnImportCanvas"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:text="导入画布"
+                style="@style/AppButton"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartCollage"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:text="开始拼图"
+                style="@style/Widget.MaterialComponents.Button"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                app:cornerRadius="@dimen/corner_md"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
